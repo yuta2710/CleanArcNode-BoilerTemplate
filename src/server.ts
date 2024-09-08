@@ -2,7 +2,7 @@ import { type Server as ServerHttp, type IncomingMessage, type ServerResponse } 
 import express, {type Router, type Request, type Response, type NextFunction} from "express";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
-import { AppError, ONE_HUNDRED, ONE_THOUSAND, SIXTY } from './core';
+import { AppError, HttpCode, ONE_HUNDRED, ONE_THOUSAND, SIXTY } from './core';
 import { CustomMiddlewares, ErrorMiddleware } from './features/shared';
 
 interface ServerOptions {
@@ -44,7 +44,7 @@ export class Server {
 
     // CORS 
     this.app.use((req, res, next) => {
-      const allowedOrigin = ['http://localhost:3000'];
+      const allowedOrigin = ['http://localhost:8000'];
       const origin = req.headers.origin;
 
       if(allowedOrigin.includes(origin!)) {
@@ -59,6 +59,12 @@ export class Server {
 
     // Routes 
     this.app.use(this.apiPrefix, this.routes);
+
+    this.app.get('/', (_req: Request, res: Response) => {
+			return res.status(HttpCode.OK).send({
+				message: `Welcome to Initial API! \n Endpoints available at http://localhost:${this.port}/`
+			});
+		});
 
     // Handle not found routes in /api/v1/* (only if 'Public content folder' is not available)
     this.routes.all('*', (req: Request, _: Response, next: NextFunction): void => {

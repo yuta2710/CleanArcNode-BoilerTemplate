@@ -7,6 +7,8 @@ import { AppRoutes } from "./routes";
 })()
 
 function main(): void {
+
+  console.log("Fuck " + envs.API_PREFIX)
   const server = new Server({
     port: envs.PORT,
     apiPrefix: envs.API_PREFIX,
